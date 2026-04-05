@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Supplier {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  markupPct   Float
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  catalogItems CatalogItem[]
+  quotes       Quote[]
+}
+
+model CatalogItem {
+  id          String   @id @default(cuid())
+  supplierId  String
+  supplier    Supplier @relation(fields: [supplierId], references: [id], onDelete: Cascade)
+  name        String
+  category    String
+  basePriceUsd Float
+  unit        String   @default("each")
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  quoteLines  QuoteLine[]
+
+  @@index([supplierId])
+}
+
+model Quote {
+  id              String   @id @default(cuid())
+  clientName      String
+  clientEmail     String?
+  clientPhone     String?
+  projectAddress  String
+  supplierId      String
+  supplier        Supplier @relation(fields: [supplierId], references: [id])
+  installationCost Float   @default(0)
+  timelineEstimate String?
+  termsAndConditions String?
+  notes           String?
+  status          String   @default("draft")
+  ghlContactId    String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  lines           QuoteLine[]
+
+  @@index([supplierId])
+  @@index([status])
+}
+
+model QuoteLine {
+  id            String   @id @default(cuid())
+  quoteId       String
+  quote         Quote    @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  catalogItemId String?
+  catalogItem   CatalogItem? @relation(fields: [catalogItemId], references: [id])
+  description   String
+  dimensions    String?
+  doorStyle     String?
+  finish        String?
+  hardware      String?
+  quantity      Int      @default(1)
+  unitCost      Float
+  markupPct     Float
+  lineTotal     Float
+  sortOrder     Int      @default(0)
+
+  @@index([quoteId])
+}
