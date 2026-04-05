@@ -45,6 +45,39 @@ export async function PUT(
     return NextResponse.json({ error: parsed.error.flatten() }, { status: 400 });
   }
   const quote = await db.quote.update({ where: { id }, data: parsed.data });
+
+  // After the quote is updated, if status changed to "sent":
+  if (parsed.data.status === "sent") {
+    try {
+      const fullQuote = await db.quote.findUnique({
+        where: { id },
+        include: { supplier: true, lines: true },
+      });
+      if (fullQuote?.ghlContactId) {
+        const { sendEmail, updateContactCustomField } = await import("@/lib/ghl");
+        const { calculateQuoteTotal } = await import("@/lib/pricing");
+        const total = calculateQuoteTotal(fullQuote.lines, fullQuote.installationCost);
+
+        await updateContactCustomField(fullQuote.ghlContactId, {
+          quote_amount: total,
+        });
+
+        const proposalUrl = `${process.env.NEXTAUTH_URL}/api/quotes/${id}/pdf`;
+        await sendEmail(
+          fullQuote.ghlContactId,
+          `Your Kitchen Design Proposal from Inplace Studio`,
+          `<p>Hi ${fullQuote.clientName},</p>
+           <p>Thank you for choosing Inplace Studio! Please find your kitchen design proposal below:</p>
+           <p><a href="${proposalUrl}" style="background:#000;color:#fff;padding:12px 24px;text-decoration:none;border-radius:4px;">View Your Proposal</a></p>
+           <p>If you have any questions, don't hesitate to reach out.</p>
+           <p>Warm regards,<br>The Inplace Studio Team</p>`
+        );
+      }
+    } catch (err) {
+      console.error("GHL integration error:", err);
+    }
+  }
+
   return NextResponse.json(quote);
 }
 
