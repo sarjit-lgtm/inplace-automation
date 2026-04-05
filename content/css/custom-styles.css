@@ -1,0 +1,1527 @@
+/* ==========================================================================
+   INPLACE STUDIO - Custom CSS
+   Luxury Kitchen Design Studio | inplacestudio.com
+   Hybrid Aesthetic: Dark Cinematic Heroes + Warm Light Content Sections
+   ========================================================================== */
+
+/* ==========================================================================
+   1. CSS CUSTOM PROPERTIES (Design Tokens)
+   ========================================================================== */
+
+:root {
+  /* --- Colors --- */
+  --color-primary-dark: #0A0A0A;
+  --color-secondary-dark: #1A1A1A;
+  --color-warm-white: #FAF8F5;
+  --color-pure-white: #FFFFFF;
+  --color-accent-gold: #C9A96E;
+  --color-accent-gold-hover: #B8944F;
+  --color-warm-gray: #6B6560;
+  --color-light-gray: #E8E4DF;
+
+  /* --- Typography --- */
+  --font-heading: 'Playfair Display', Georgia, 'Times New Roman', serif;
+  --font-body: 'Montserrat', 'Helvetica Neue', Arial, sans-serif;
+
+  /* --- Spacing --- */
+  --section-padding: 100px 0;
+  --section-padding-mobile: 60px 0;
+  --container-padding: 0 20px;
+
+  /* --- Transitions --- */
+  --transition-base: 0.3s ease;
+  --transition-slow: 0.5s ease;
+  --transition-overlay: 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+
+  /* --- Shadows --- */
+  --shadow-card: 0 4px 20px rgba(0, 0, 0, 0.06);
+  --shadow-card-hover: 0 8px 30px rgba(0, 0, 0, 0.12);
+  --shadow-nav: 0 2px 20px rgba(0, 0, 0, 0.15);
+
+  /* --- Border Radius --- */
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-lg: 12px;
+
+  /* --- Animation Delays (configurable per element) --- */
+  --fade-delay: 0s;
+  --fade-duration: 0.8s;
+}
+
+
+/* ==========================================================================
+   2. GLOBAL RESETS & BASE TYPOGRAPHY
+   ========================================================================== */
+
+body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 1.7;
+  color: var(--color-warm-gray);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6,
+.elementor-heading-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  line-height: 1.2;
+  color: var(--color-primary-dark);
+}
+
+h1, .elementor-size-xxl { font-size: clamp(36px, 5vw, 64px); }
+h2, .elementor-size-xl  { font-size: clamp(28px, 4vw, 48px); }
+h3, .elementor-size-lg  { font-size: clamp(22px, 3vw, 32px); }
+h4, .elementor-size-md  { font-size: clamp(18px, 2.5vw, 24px); }
+
+p {
+  font-family: var(--font-body);
+  font-weight: 400;
+  color: var(--color-warm-gray);
+  line-height: 1.7;
+}
+
+a {
+  color: var(--color-accent-gold);
+  text-decoration: none;
+  transition: color var(--transition-base);
+}
+
+a:hover {
+  color: var(--color-accent-gold-hover);
+}
+
+/* Dark section text overrides */
+.dark-section h1,
+.dark-section h2,
+.dark-section h3,
+.dark-section h4,
+.dark-section h5,
+.dark-section h6,
+.dark-section .elementor-heading-title {
+  color: var(--color-pure-white);
+}
+
+.dark-section p,
+.dark-section .elementor-text-editor {
+  color: rgba(255, 255, 255, 0.75);
+}
+
+
+/* ==========================================================================
+   3. UTILITY CLASSES
+   ========================================================================== */
+
+.gold-text {
+  color: var(--color-accent-gold) !important;
+}
+
+.dark-section {
+  background-color: var(--color-primary-dark) !important;
+  color: var(--color-pure-white);
+}
+
+.light-section {
+  background-color: var(--color-warm-white) !important;
+  color: var(--color-primary-dark);
+}
+
+.light-section p {
+  color: var(--color-warm-gray);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.overflow-hidden {
+  overflow: hidden;
+}
+
+
+/* ==========================================================================
+   4. PAGE LOAD / PRELOADER / TRANSITION
+   ========================================================================== */
+
+/* Page fade-in on load */
+body {
+  opacity: 0;
+  animation: pageLoadFadeIn 0.6s ease forwards;
+  animation-delay: 0.1s;
+}
+
+@keyframes pageLoadFadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Preloader overlay */
+.preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: var(--color-primary-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100000;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
+
+.preloader.loaded {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.preloader .spinner {
+  width: 40px;
+  height: 40px;
+  border: 3px solid rgba(201, 169, 110, 0.2);
+  border-top-color: var(--color-accent-gold);
+  border-radius: 50%;
+  animation: preloaderSpin 0.8s linear infinite;
+}
+
+@keyframes preloaderSpin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+
+/* ==========================================================================
+   5. NAVIGATION
+   ========================================================================== */
+
+/* Base transparent nav over hero */
+.elementor-location-header .elementor-section,
+.elementor-location-header .elementor-container,
+.elementor-location-header .e-con {
+  transition: background-color var(--transition-base),
+              box-shadow var(--transition-base),
+              backdrop-filter var(--transition-base);
+}
+
+/* Transparent state (hero) */
+header.elementor-location-header {
+  position: absolute;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* Sticky state — solid dark background */
+.elementor-sticky--effects {
+  background-color: var(--color-primary-dark) !important;
+  box-shadow: var(--shadow-nav) !important;
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+.elementor-sticky--effects .elementor-nav-menu a {
+  color: var(--color-pure-white) !important;
+}
+
+/* Navigation links */
+.elementor-nav-menu a {
+  font-family: var(--font-body) !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  letter-spacing: 1px !important;
+  text-transform: uppercase !important;
+  color: var(--color-pure-white) !important;
+  transition: color var(--transition-base) !important;
+}
+
+.elementor-nav-menu a:hover,
+.elementor-nav-menu .elementor-item-active a,
+.elementor-nav-menu .elementor-item.elementor-item-active {
+  color: var(--color-accent-gold) !important;
+}
+
+/* Nav underline indicator */
+.elementor-nav-menu .elementor-item::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  width: 0;
+  height: 2px;
+  background: var(--color-accent-gold);
+  transition: width var(--transition-base), left var(--transition-base);
+}
+
+.elementor-nav-menu .elementor-item:hover::after,
+.elementor-nav-menu .elementor-item-active::after {
+  width: 100%;
+  left: 0;
+}
+
+/* Mobile menu */
+.elementor-menu-toggle {
+  color: var(--color-pure-white) !important;
+}
+
+.elementor-nav-menu--dropdown {
+  background-color: var(--color-primary-dark) !important;
+  border: 1px solid rgba(201, 169, 110, 0.2) !important;
+}
+
+.elementor-nav-menu--dropdown a {
+  color: var(--color-pure-white) !important;
+  padding: 12px 20px !important;
+}
+
+.elementor-nav-menu--dropdown a:hover {
+  background-color: var(--color-secondary-dark) !important;
+  color: var(--color-accent-gold) !important;
+}
+
+
+/* ==========================================================================
+   6. BUTTONS
+   ========================================================================== */
+
+/* Shared button base */
+.btn-secondary,
+.btn-dark-section,
+.btn-primary-dark {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 16px 40px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  text-align: center;
+  text-decoration: none;
+  line-height: 1;
+}
+
+/* Gold outline button (light sections) */
+.btn-secondary {
+  background-color: transparent;
+  border: 2px solid var(--color-accent-gold);
+  color: var(--color-accent-gold);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-accent-gold);
+  color: var(--color-primary-dark);
+  border-color: var(--color-accent-gold);
+}
+
+/* White outline button (dark sections) */
+.btn-dark-section {
+  background-color: transparent;
+  border: 2px solid var(--color-pure-white);
+  color: var(--color-pure-white);
+}
+
+.btn-dark-section:hover {
+  background-color: var(--color-pure-white);
+  color: var(--color-primary-dark);
+  border-color: var(--color-pure-white);
+}
+
+/* Dark button (gold CTA banner sections) */
+.btn-primary-dark {
+  background-color: var(--color-primary-dark);
+  border: 2px solid var(--color-primary-dark);
+  color: var(--color-pure-white);
+}
+
+.btn-primary-dark:hover {
+  background-color: transparent;
+  color: var(--color-primary-dark);
+  border-color: var(--color-primary-dark);
+}
+
+/* Elementor button overrides to match brand */
+.elementor-button {
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 2px !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 16px 40px !important;
+  transition: all var(--transition-base) !important;
+}
+
+
+/* ==========================================================================
+   7. HERO SECTION & SCROLL CHEVRON
+   ========================================================================== */
+
+.hero-section {
+  position: relative;
+  overflow: hidden;
+}
+
+.hero-section .elementor-background-overlay {
+  background: linear-gradient(
+    180deg,
+    rgba(10, 10, 10, 0.4) 0%,
+    rgba(10, 10, 10, 0.7) 100%
+  ) !important;
+}
+
+/* Scroll-down bounce chevron */
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0) translateX(-50%);
+  }
+  40% {
+    transform: translateY(-12px) translateX(-50%);
+  }
+  60% {
+    transform: translateY(-6px) translateX(-50%);
+  }
+}
+
+.scroll-chevron {
+  position: absolute;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  animation: bounce 2s infinite;
+  cursor: pointer;
+  opacity: 0.8;
+  transition: opacity var(--transition-base);
+}
+
+.scroll-chevron:hover {
+  opacity: 1;
+}
+
+.scroll-chevron svg,
+.scroll-chevron i {
+  color: var(--color-pure-white);
+  font-size: 24px;
+  width: 24px;
+  height: 24px;
+}
+
+
+/* ==========================================================================
+   8. SCROLL / FADE ANIMATIONS
+   ========================================================================== */
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-up {
+  opacity: 0;
+  animation: fadeInUp var(--fade-duration) ease forwards;
+  animation-delay: var(--fade-delay, 0s);
+}
+
+/* Staggered delays for child elements */
+.animate-fade-up:nth-child(1) { --fade-delay: 0s; }
+.animate-fade-up:nth-child(2) { --fade-delay: 0.15s; }
+.animate-fade-up:nth-child(3) { --fade-delay: 0.3s; }
+.animate-fade-up:nth-child(4) { --fade-delay: 0.45s; }
+.animate-fade-up:nth-child(5) { --fade-delay: 0.6s; }
+.animate-fade-up:nth-child(6) { --fade-delay: 0.75s; }
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+@keyframes slideInLeft {
+  from {
+    opacity: 0;
+    transform: translateX(-40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(40px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+
+/* ==========================================================================
+   9. SECTION DIVIDERS (Dark-to-Light / Light-to-Dark)
+   ========================================================================== */
+
+.section-divider-dark-to-light {
+  position: relative;
+}
+
+.section-divider-dark-to-light::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background-color: var(--color-warm-white);
+  clip-path: polygon(0 60%, 100% 0, 100% 100%, 0 100%);
+  z-index: 2;
+}
+
+.section-divider-light-to-dark {
+  position: relative;
+}
+
+.section-divider-light-to-dark::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 80px;
+  background-color: var(--color-primary-dark);
+  clip-path: polygon(0 60%, 100% 0, 100% 100%, 0 100%);
+  z-index: 2;
+}
+
+
+/* ==========================================================================
+   10. PORTFOLIO GRID & HOVER EFFECTS
+   ========================================================================== */
+
+.portfolio-item {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.portfolio-grid .elementor-image img,
+.portfolio-item img {
+  transition: transform var(--transition-slow);
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.portfolio-grid .elementor-image:hover img,
+.portfolio-item:hover img {
+  transform: scale(1.05);
+}
+
+.portfolio-item .overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 30px;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, 0.9) 0%,
+    rgba(10, 10, 10, 0.5) 60%,
+    transparent 100%
+  );
+  transform: translateY(100%);
+  transition: transform var(--transition-overlay);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  min-height: 40%;
+}
+
+.portfolio-item:hover .overlay {
+  transform: translateY(0);
+}
+
+.portfolio-item .overlay h3,
+.portfolio-item .overlay .project-name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 22px;
+  color: var(--color-pure-white);
+  margin-bottom: 6px;
+}
+
+.portfolio-item .overlay p,
+.portfolio-item .overlay .project-category {
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-accent-gold);
+  margin: 0;
+}
+
+/* Portfolio filter/category tabs */
+.portfolio-filter {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 40px;
+}
+
+.portfolio-filter button,
+.portfolio-filter a {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 13px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  padding: 8px 20px;
+  border: 1px solid var(--color-light-gray);
+  background: transparent;
+  color: var(--color-warm-gray);
+  cursor: pointer;
+  transition: all var(--transition-base);
+  border-radius: var(--radius-sm);
+}
+
+.portfolio-filter button:hover,
+.portfolio-filter button.active,
+.portfolio-filter a:hover,
+.portfolio-filter a.active {
+  border-color: var(--color-accent-gold);
+  color: var(--color-accent-gold);
+  background-color: rgba(201, 169, 110, 0.08);
+}
+
+
+/* ==========================================================================
+   11. TEAM SECTION
+   ========================================================================== */
+
+.team-member {
+  position: relative;
+  overflow: hidden;
+  border-radius: var(--radius-md);
+}
+
+.team-member img {
+  display: block;
+  width: 100%;
+  transition: transform var(--transition-slow);
+}
+
+.team-member:hover img {
+  transform: scale(1.03);
+}
+
+.team-member .bio-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(
+    to top,
+    rgba(10, 10, 10, 0.95) 0%,
+    rgba(10, 10, 10, 0.7) 70%,
+    transparent 100%
+  );
+  padding: 30px 24px;
+  transform: translateY(calc(100% - 70px));
+  transition: transform var(--transition-overlay);
+}
+
+.team-member:hover .bio-overlay {
+  transform: translateY(0);
+}
+
+.team-member .bio-overlay .member-name {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 20px;
+  color: var(--color-pure-white);
+  margin-bottom: 2px;
+}
+
+.team-member .bio-overlay .member-role {
+  font-family: var(--font-body);
+  font-weight: 500;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: var(--color-accent-gold);
+  margin-bottom: 14px;
+}
+
+.team-member .bio-overlay .member-bio {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  transition: opacity 0.3s ease 0.1s;
+}
+
+.team-member:hover .bio-overlay .member-bio {
+  opacity: 1;
+}
+
+
+/* ==========================================================================
+   12. TESTIMONIAL CARDS
+   ========================================================================== */
+
+.testimonial-card {
+  background-color: var(--color-pure-white);
+  padding: 40px 36px;
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+  position: relative;
+}
+
+.testimonial-card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-4px);
+}
+
+/* Large decorative quote mark */
+.testimonial-card::before {
+  content: '\201C';
+  font-family: var(--font-heading);
+  font-size: 80px;
+  color: var(--color-accent-gold);
+  opacity: 0.2;
+  position: absolute;
+  top: 10px;
+  left: 24px;
+  line-height: 1;
+}
+
+.testimonial-quote {
+  font-family: var(--font-heading);
+  font-style: italic;
+  font-size: 18px;
+  line-height: 1.6;
+  color: var(--color-primary-dark);
+  margin-bottom: 24px;
+}
+
+.testimonial-card .star-rating {
+  color: var(--color-accent-gold);
+  font-size: 16px;
+  margin-bottom: 16px;
+  letter-spacing: 3px;
+}
+
+.testimonial-card .client-name {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  color: var(--color-primary-dark);
+  margin-bottom: 2px;
+}
+
+.testimonial-card .client-location {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: 13px;
+  color: var(--color-warm-gray);
+}
+
+/* Elementor testimonial widget overrides */
+.elementor-testimonial-wrapper .elementor-testimonial-content {
+  font-family: var(--font-heading) !important;
+  font-style: italic !important;
+  font-size: 18px !important;
+  line-height: 1.6 !important;
+}
+
+
+/* ==========================================================================
+   13. PROCESS TIMELINE
+   ========================================================================== */
+
+.process-step {
+  position: relative;
+  padding-left: 40px;
+  padding-bottom: 50px;
+}
+
+/* Connecting vertical line between steps */
+.process-step::before {
+  content: '';
+  position: absolute;
+  left: 24px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background-color: var(--color-light-gray);
+}
+
+.process-step:last-child::before {
+  display: none;
+}
+
+.process-step-number {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 80px;
+  line-height: 1;
+  color: var(--color-accent-gold);
+  opacity: 0.25;
+  margin-bottom: 10px;
+}
+
+.process-step h3 {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.process-step p {
+  font-size: 15px;
+  line-height: 1.7;
+}
+
+/* Horizontal timeline variant */
+.process-timeline-horizontal {
+  display: flex;
+  justify-content: space-between;
+  gap: 30px;
+  position: relative;
+}
+
+.process-timeline-horizontal::before {
+  content: '';
+  position: absolute;
+  top: 50px;
+  left: 5%;
+  right: 5%;
+  height: 1px;
+  background-color: var(--color-light-gray);
+}
+
+.process-timeline-horizontal .process-step {
+  flex: 1;
+  text-align: center;
+  padding-left: 0;
+  padding-bottom: 0;
+}
+
+.process-timeline-horizontal .process-step::before {
+  display: none;
+}
+
+
+/* ==========================================================================
+   14. SUPPLIER / PARTNER LOGOS
+   ========================================================================== */
+
+.supplier-logo {
+  filter: grayscale(100%);
+  opacity: 0.6;
+  transition: filter var(--transition-base),
+              opacity var(--transition-base),
+              transform var(--transition-base);
+}
+
+.supplier-logo:hover {
+  filter: grayscale(0%);
+  opacity: 1;
+  transform: scale(1.05);
+}
+
+/* Elementor image carousel logo overrides */
+.supplier-logos .elementor-image img,
+.supplier-logos .swiper-slide img {
+  filter: grayscale(100%);
+  opacity: 0.6;
+  transition: filter var(--transition-base), opacity var(--transition-base);
+}
+
+.supplier-logos .elementor-image:hover img,
+.supplier-logos .swiper-slide:hover img {
+  filter: grayscale(0%);
+  opacity: 1;
+}
+
+
+/* ==========================================================================
+   15. BEFORE / AFTER SLIDER
+   ========================================================================== */
+
+.before-after-slider {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-card);
+}
+
+/* Elementor / third-party before-after plugin overrides */
+.twentytwenty-handle {
+  border-color: var(--color-accent-gold) !important;
+  background-color: var(--color-accent-gold) !important;
+}
+
+.twentytwenty-handle::before,
+.twentytwenty-handle::after {
+  background-color: var(--color-accent-gold) !important;
+  box-shadow: none !important;
+}
+
+.twentytwenty-left-arrow {
+  border-right-color: var(--color-primary-dark) !important;
+}
+
+.twentytwenty-right-arrow {
+  border-left-color: var(--color-primary-dark) !important;
+}
+
+.twentytwenty-overlay .twentytwenty-before-label::before,
+.twentytwenty-overlay .twentytwenty-after-label::before {
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  letter-spacing: 2px !important;
+  text-transform: uppercase !important;
+  background: rgba(10, 10, 10, 0.6) !important;
+  padding: 8px 16px !important;
+  border-radius: var(--radius-sm) !important;
+}
+
+
+/* ==========================================================================
+   16. FAQ ACCORDION (Elementor Overrides)
+   ========================================================================== */
+
+.elementor-accordion .elementor-accordion-item {
+  border: none !important;
+  border-bottom: 1px solid var(--color-light-gray) !important;
+  margin-bottom: 0 !important;
+}
+
+.elementor-accordion .elementor-tab-title {
+  font-family: var(--font-heading) !important;
+  font-weight: 600 !important;
+  font-size: 18px !important;
+  color: var(--color-primary-dark) !important;
+  padding: 20px 0 !important;
+  transition: color var(--transition-base);
+}
+
+.elementor-accordion .elementor-tab-title:hover {
+  color: var(--color-accent-gold) !important;
+}
+
+/* Active / expanded state */
+.elementor-accordion .elementor-tab-title.elementor-active {
+  color: var(--color-accent-gold) !important;
+}
+
+.elementor-accordion .elementor-tab-title .elementor-accordion-icon {
+  color: var(--color-warm-gray) !important;
+  transition: color var(--transition-base);
+}
+
+.elementor-accordion .elementor-tab-title.elementor-active .elementor-accordion-icon {
+  color: var(--color-accent-gold) !important;
+}
+
+.elementor-accordion .elementor-tab-content {
+  font-family: var(--font-body) !important;
+  font-size: 15px !important;
+  line-height: 1.7 !important;
+  color: var(--color-warm-gray) !important;
+  padding: 0 0 20px 0 !important;
+  border-top: none !important;
+}
+
+/* Dark section accordion overrides */
+.dark-section .elementor-accordion .elementor-tab-title {
+  color: var(--color-pure-white) !important;
+}
+
+.dark-section .elementor-accordion .elementor-tab-title.elementor-active {
+  color: var(--color-accent-gold) !important;
+}
+
+.dark-section .elementor-accordion .elementor-accordion-item {
+  border-bottom-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.dark-section .elementor-accordion .elementor-tab-content {
+  color: rgba(255, 255, 255, 0.7) !important;
+}
+
+
+/* ==========================================================================
+   17. GHL / EMBEDDED FORM STYLING
+   ========================================================================== */
+
+/* GoHighLevel form overrides */
+iframe[src*="leadconnectorhq"],
+iframe[src*="msgsndr"],
+.ghl-form-embed {
+  border: none !important;
+  border-radius: var(--radius-md);
+}
+
+/* Generic form styling (also applies to GHL styled forms) */
+.inplace-form input[type="text"],
+.inplace-form input[type="email"],
+.inplace-form input[type="tel"],
+.inplace-form input[type="url"],
+.inplace-form textarea,
+.inplace-form select {
+  font-family: var(--font-body);
+  font-size: 15px;
+  padding: 14px 18px;
+  border: 1px solid var(--color-light-gray);
+  border-radius: var(--radius-sm);
+  background-color: var(--color-pure-white);
+  color: var(--color-primary-dark);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base);
+  width: 100%;
+}
+
+.inplace-form input:focus,
+.inplace-form textarea:focus,
+.inplace-form select:focus {
+  outline: none;
+  border-color: var(--color-accent-gold);
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.15);
+}
+
+.inplace-form label {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--color-primary-dark);
+  margin-bottom: 8px;
+  display: block;
+}
+
+.inplace-form button[type="submit"],
+.inplace-form input[type="submit"] {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 14px;
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 16px 40px;
+  background-color: var(--color-accent-gold);
+  color: var(--color-pure-white);
+  border: 2px solid var(--color-accent-gold);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-base);
+}
+
+.inplace-form button[type="submit"]:hover,
+.inplace-form input[type="submit"]:hover {
+  background-color: var(--color-accent-gold-hover);
+  border-color: var(--color-accent-gold-hover);
+}
+
+/* Elementor form widget overrides */
+.elementor-form .elementor-field {
+  font-family: var(--font-body) !important;
+  border: 1px solid var(--color-light-gray) !important;
+  border-radius: var(--radius-sm) !important;
+  padding: 14px 18px !important;
+}
+
+.elementor-form .elementor-field:focus {
+  border-color: var(--color-accent-gold) !important;
+  box-shadow: 0 0 0 3px rgba(201, 169, 110, 0.15) !important;
+}
+
+
+/* ==========================================================================
+   18. FOOTER
+   ========================================================================== */
+
+.site-footer,
+footer.elementor-location-footer {
+  background-color: var(--color-secondary-dark);
+}
+
+footer h1, footer h2, footer h3, footer h4, footer h5, footer h6 {
+  color: var(--color-pure-white);
+}
+
+footer p, footer li, footer a {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+footer a {
+  transition: color var(--transition-base);
+}
+
+footer a:hover {
+  color: var(--color-accent-gold);
+}
+
+/* Social icon hover: white to gold */
+footer .elementor-social-icon {
+  transition: background-color var(--transition-base), color var(--transition-base);
+}
+
+footer .elementor-social-icon:hover {
+  background-color: var(--color-accent-gold) !important;
+  color: var(--color-primary-dark) !important;
+}
+
+footer .elementor-social-icon svg {
+  transition: fill var(--transition-base);
+}
+
+footer .elementor-social-icon:hover svg {
+  fill: var(--color-primary-dark) !important;
+}
+
+/* Footer divider */
+footer .elementor-divider-separator {
+  border-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Footer copyright bar */
+.footer-copyright {
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding: 20px 0;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+
+/* ==========================================================================
+   19. BLOG POST CARDS & CATEGORY TAGS
+   ========================================================================== */
+
+.blog-card,
+.elementor-post {
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  background-color: var(--color-pure-white);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.blog-card:hover,
+.elementor-post:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-4px);
+}
+
+.blog-card img,
+.elementor-post__thumbnail img {
+  transition: transform var(--transition-slow);
+}
+
+.blog-card:hover img,
+.elementor-post:hover .elementor-post__thumbnail img {
+  transform: scale(1.05);
+}
+
+.elementor-post__thumbnail {
+  overflow: hidden;
+}
+
+/* Category tags */
+.blog-category-tag,
+.elementor-post__badge {
+  display: inline-block;
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  padding: 5px 14px;
+  background-color: var(--color-accent-gold);
+  color: var(--color-pure-white);
+  border-radius: 2px;
+}
+
+/* Blog post title */
+.blog-card h3 a,
+.elementor-post__title a {
+  font-family: var(--font-heading);
+  font-weight: 600;
+  color: var(--color-primary-dark);
+  transition: color var(--transition-base);
+}
+
+.blog-card h3 a:hover,
+.elementor-post__title a:hover {
+  color: var(--color-accent-gold);
+}
+
+/* Read more link */
+.elementor-post__read-more {
+  font-family: var(--font-body) !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1.5px !important;
+  color: var(--color-accent-gold) !important;
+  transition: color var(--transition-base) !important;
+}
+
+.elementor-post__read-more:hover {
+  color: var(--color-accent-gold-hover) !important;
+}
+
+/* Post meta */
+.elementor-post__meta-data {
+  font-family: var(--font-body) !important;
+  font-size: 13px !important;
+  color: var(--color-warm-gray) !important;
+}
+
+
+/* ==========================================================================
+   20. MISC ELEMENTOR OVERRIDES & ENHANCEMENTS
+   ========================================================================== */
+
+/* Gold horizontal rule */
+.elementor-divider .elementor-divider-separator {
+  border-color: var(--color-light-gray);
+}
+
+.gold-divider .elementor-divider-separator {
+  border-color: var(--color-accent-gold) !important;
+}
+
+/* Counter / stat numbers */
+.elementor-counter-number-wrapper {
+  font-family: var(--font-heading) !important;
+  font-weight: 700 !important;
+  color: var(--color-accent-gold) !important;
+}
+
+/* Icon boxes */
+.elementor-icon-box-icon .elementor-icon {
+  color: var(--color-accent-gold) !important;
+  transition: transform var(--transition-base);
+}
+
+.elementor-icon-box-wrapper:hover .elementor-icon {
+  transform: scale(1.1);
+}
+
+/* Progress bar gold fill */
+.elementor-progress-bar {
+  background-color: var(--color-accent-gold) !important;
+}
+
+/* Elementor tabs widget */
+.elementor-tab-title.elementor-active {
+  color: var(--color-accent-gold) !important;
+}
+
+/* Image box caption */
+.elementor-image-box-title {
+  font-family: var(--font-heading) !important;
+}
+
+
+/* ==========================================================================
+   21. CTA BANNER SECTION
+   ========================================================================== */
+
+.cta-banner {
+  background-color: var(--color-accent-gold);
+  padding: 60px 0;
+}
+
+.cta-banner h2,
+.cta-banner h3 {
+  color: var(--color-primary-dark);
+}
+
+.cta-banner p {
+  color: rgba(10, 10, 10, 0.7);
+}
+
+
+/* ==========================================================================
+   22. RESPONSIVE ADJUSTMENTS
+   ========================================================================== */
+
+/* --- Tablet (max-width: 1024px) --- */
+@media (max-width: 1024px) {
+  :root {
+    --section-padding: 80px 0;
+  }
+
+  h1, .elementor-size-xxl { font-size: clamp(32px, 5vw, 48px); }
+  h2, .elementor-size-xl  { font-size: clamp(26px, 4vw, 36px); }
+
+  .process-step-number {
+    font-size: 60px;
+  }
+
+  .process-timeline-horizontal {
+    flex-wrap: wrap;
+  }
+
+  .process-timeline-horizontal::before {
+    display: none;
+  }
+
+  .process-timeline-horizontal .process-step {
+    flex: 0 0 45%;
+  }
+
+  .portfolio-item .overlay {
+    padding: 24px;
+  }
+
+  .testimonial-card {
+    padding: 30px 28px;
+  }
+
+  .btn-secondary,
+  .btn-dark-section,
+  .btn-primary-dark {
+    padding: 14px 32px;
+    font-size: 13px;
+  }
+
+  .section-divider-dark-to-light::after,
+  .section-divider-light-to-dark::after {
+    height: 50px;
+  }
+}
+
+/* --- Mobile (max-width: 768px) --- */
+@media (max-width: 768px) {
+  :root {
+    --section-padding: 60px 0;
+  }
+
+  body {
+    font-size: 15px;
+    line-height: 1.6;
+  }
+
+  h1, .elementor-size-xxl { font-size: clamp(28px, 6vw, 40px); }
+  h2, .elementor-size-xl  { font-size: clamp(24px, 5vw, 32px); }
+  h3, .elementor-size-lg  { font-size: clamp(20px, 4vw, 26px); }
+
+  .process-step-number {
+    font-size: 48px;
+  }
+
+  .process-step {
+    padding-left: 20px;
+    padding-bottom: 30px;
+  }
+
+  .process-step::before {
+    left: 12px;
+  }
+
+  .process-timeline-horizontal .process-step {
+    flex: 0 0 100%;
+    text-align: left;
+  }
+
+  /* Buttons full-width on mobile */
+  .btn-secondary,
+  .btn-dark-section,
+  .btn-primary-dark {
+    display: block;
+    width: 100%;
+    padding: 14px 24px;
+    font-size: 13px;
+    letter-spacing: 1.5px;
+  }
+
+  /* Portfolio overlay always partially visible on mobile */
+  .portfolio-item .overlay {
+    transform: translateY(0);
+    padding: 20px;
+    min-height: auto;
+    background: linear-gradient(
+      to top,
+      rgba(10, 10, 10, 0.85) 0%,
+      transparent 100%
+    );
+  }
+
+  .portfolio-item .overlay h3 {
+    font-size: 18px;
+  }
+
+  /* Team bio always visible on mobile */
+  .team-member .bio-overlay {
+    transform: translateY(0);
+    padding: 20px;
+    position: relative;
+    background: var(--color-secondary-dark);
+  }
+
+  .team-member .bio-overlay .member-bio {
+    opacity: 1;
+  }
+
+  /* Testimonial cards */
+  .testimonial-card {
+    padding: 24px 20px;
+  }
+
+  .testimonial-quote {
+    font-size: 16px;
+  }
+
+  .testimonial-card::before {
+    font-size: 60px;
+  }
+
+  /* Section dividers smaller on mobile */
+  .section-divider-dark-to-light::after,
+  .section-divider-light-to-dark::after {
+    height: 35px;
+  }
+
+  /* Scroll chevron */
+  .scroll-chevron {
+    bottom: 20px;
+  }
+
+  /* Supplier logos grid */
+  .supplier-logo {
+    filter: grayscale(0%);
+    opacity: 0.8;
+  }
+
+  /* Accordion */
+  .elementor-accordion .elementor-tab-title {
+    font-size: 16px !important;
+    padding: 16px 0 !important;
+  }
+
+  /* CTA banner */
+  .cta-banner {
+    padding: 40px 0;
+  }
+
+  /* Blog cards */
+  .blog-card,
+  .elementor-post {
+    margin-bottom: 20px;
+  }
+
+  /* Footer */
+  .footer-copyright {
+    text-align: center;
+    font-size: 12px;
+  }
+}
+
+/* --- Small mobile (max-width: 480px) --- */
+@media (max-width: 480px) {
+  h1, .elementor-size-xxl { font-size: 28px; }
+  h2, .elementor-size-xl  { font-size: 24px; }
+  h3, .elementor-size-lg  { font-size: 20px; }
+
+  .process-step-number {
+    font-size: 40px;
+  }
+
+  .elementor-accordion .elementor-tab-title {
+    font-size: 15px !important;
+  }
+}
+
+
+/* ==========================================================================
+   23. PRINT STYLES
+   ========================================================================== */
+
+@media print {
+  .preloader,
+  .scroll-chevron,
+  .elementor-location-header,
+  footer.elementor-location-footer {
+    display: none !important;
+  }
+
+  body {
+    color: #000 !important;
+    background: #fff !important;
+  }
+
+  .dark-section {
+    background: #fff !important;
+    color: #000 !important;
+  }
+}
+
+
+/* ==========================================================================
+   24. ACCESSIBILITY ENHANCEMENTS
+   ========================================================================== */
+
+/* Focus outlines for keyboard navigation */
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--color-accent-gold);
+  outline-offset: 2px;
+}
+
+/* Reduced motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  body {
+    animation: none;
+    opacity: 1;
+  }
+
+  .portfolio-grid .elementor-image img,
+  .portfolio-item img,
+  .team-member img,
+  .blog-card img {
+    transition: none;
+  }
+
+  .scroll-chevron {
+    animation: none;
+  }
+}
+
+/* ==========================================================================
+   END OF CUSTOM STYLES — INPLACE STUDIO
+   ========================================================================== */
