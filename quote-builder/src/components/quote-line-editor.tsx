@@ -13,12 +13,12 @@ type CatalogItem = {
 };
 
 type LineData = {
-  catalogItemId?: string;
+  catalogItemId?: string | null;
   description: string;
-  dimensions: string;
-  doorStyle: string;
-  finish: string;
-  hardware: string;
+  dimensions: string | null;
+  doorStyle: string | null;
+  finish: string | null;
+  hardware: string | null;
   quantity: number;
   unitCost: number;
   markupPct: number;
@@ -144,16 +144,16 @@ export function QuoteLineEditor({ quoteId, lines: initialLines, catalog, default
                 <input type="text" value={line.description} onChange={(e) => updateLine(i, "description", e.target.value)} className="w-full border rounded px-2 py-1" />
               </td>
               <td className="py-2 px-2">
-                <input type="text" value={line.dimensions} onChange={(e) => updateLine(i, "dimensions", e.target.value)} className="w-full border rounded px-2 py-1" placeholder="24x34.5x24" />
+                <input type="text" value={line.dimensions ?? ""} onChange={(e) => updateLine(i, "dimensions", e.target.value)} className="w-full border rounded px-2 py-1" placeholder="24x34.5x24" />
               </td>
               <td className="py-2 px-2">
-                <input type="text" value={line.doorStyle} onChange={(e) => updateLine(i, "doorStyle", e.target.value)} className="w-full border rounded px-2 py-1" />
+                <input type="text" value={line.doorStyle ?? ""} onChange={(e) => updateLine(i, "doorStyle", e.target.value)} className="w-full border rounded px-2 py-1" />
               </td>
               <td className="py-2 px-2">
-                <input type="text" value={line.finish} onChange={(e) => updateLine(i, "finish", e.target.value)} className="w-full border rounded px-2 py-1" />
+                <input type="text" value={line.finish ?? ""} onChange={(e) => updateLine(i, "finish", e.target.value)} className="w-full border rounded px-2 py-1" />
               </td>
               <td className="py-2 px-2">
-                <input type="text" value={line.hardware} onChange={(e) => updateLine(i, "hardware", e.target.value)} className="w-full border rounded px-2 py-1" />
+                <input type="text" value={line.hardware ?? ""} onChange={(e) => updateLine(i, "hardware", e.target.value)} className="w-full border rounded px-2 py-1" />
               </td>
               <td className="py-2 px-2">
                 <input type="number" value={line.quantity} onChange={(e) => updateLine(i, "quantity", Number(e.target.value))} className="w-full border rounded px-2 py-1" min={1} />

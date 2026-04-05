@@ -24,23 +24,23 @@ export async function GET(
 
   const total = calculateQuoteTotal(quote.lines, quote.installationCost);
 
-  const buffer = await renderToBuffer(
-    React.createElement(ProposalDocument, {
-      data: {
-        clientName: quote.clientName,
-        clientEmail: quote.clientEmail,
-        clientPhone: quote.clientPhone,
-        projectAddress: quote.projectAddress,
-        supplierName: quote.supplier.name,
-        lines: quote.lines,
-        installationCost: quote.installationCost,
-        timelineEstimate: quote.timelineEstimate,
-        termsAndConditions: quote.termsAndConditions,
-        total,
-        createdAt: quote.createdAt.toISOString(),
-      },
-    })
-  );
+  const element = React.createElement(ProposalDocument, {
+    data: {
+      clientName: quote.clientName,
+      clientEmail: quote.clientEmail,
+      clientPhone: quote.clientPhone,
+      projectAddress: quote.projectAddress,
+      supplierName: quote.supplier.name,
+      lines: quote.lines,
+      installationCost: quote.installationCost,
+      timelineEstimate: quote.timelineEstimate,
+      termsAndConditions: quote.termsAndConditions,
+      total,
+      createdAt: quote.createdAt.toISOString(),
+    },
+  });
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const buffer = await (renderToBuffer as any)(element);
 
   return new NextResponse(buffer, {
     headers: {
