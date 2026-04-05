@@ -24,10 +24,6 @@ inplacestudio.com/
 │   ├── /services/kitchen-design/
 │   └── /services/kitchen-remodeling/
 ├── /suppliers/
-│   ├── /suppliers/siematic/
-│   ├── /suppliers/woodmode/
-│   ├── /suppliers/renzo-restelli/
-│   └── /suppliers/signature-custom-cabinetry/
 ├── /process/
 ├── /testimonials/
 ├── /contact/
@@ -52,7 +48,7 @@ inplacestudio.com/
 └── /sitemap.xml
 ```
 
-**Total pages at launch:** ~30+ (Home, About, Portfolio hub, 6+ project pages, 3 service pages, 4 supplier pages, Process, Testimonials, Contact, Book Consultation, 9 location pages, Privacy Policy, initial blog posts)
+**Total pages at launch:** ~25+ (Home, About, Portfolio hub, 6+ project pages, 3 service pages, Suppliers, Process, Testimonials, Contact, Book Consultation, 9 location pages, Privacy Policy, initial blog posts)
 
 ---
 
@@ -223,13 +219,17 @@ Both fonts available via Google Fonts in Elementor.
 
 ---
 
-### Supplier Pages (4 pages — shared template)
+### Suppliers Page (single page)
 
-**Hero (Dark)** — supplier logo prominent + tagline
+**Hero (Dark)** — H1: `Our Partners`
 
-**Content (Warm White)** — about the supplier, why Inplace partners with them, product range (door styles, finishes, materials), project gallery using this supplier
+**Supplier Grid (Warm White)** — one section per supplier (SieMatic, Woodmode, Renzo Restelli, Signature Custom Cabinetry, locally produced custom):
+- Supplier logo
+- Brief description (2-3 sentences about the brand)
+- 2-3 project photos using that supplier
+- No individual supplier subpages
 
-**CTA: `Design with [Supplier Name]` → Book Consultation**
+**CTA Banner → Book Consultation**
 
 ---
 
@@ -439,7 +439,7 @@ Each step: icon, title, description, relevant photo. Scroll-triggered entrance a
 - Dark transparent on hero sections, solid dark on scroll
 - Logo left, nav links center, `BOOK CONSULTATION` gold CTA button right
 - Mobile: hamburger menu with full-screen overlay
-- Links: Home, About, Portfolio, Services (dropdown), Suppliers (dropdown), Process, Contact
+- Links: Home, About, Portfolio, Services (dropdown), Suppliers, Process, Contact
 - Phone number visible on desktop nav
 
 ### Footer (Dark #1A1A1A — every page)
