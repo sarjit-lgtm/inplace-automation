@@ -1,5 +1,5 @@
 export const CONFIG = {
-  sarjitPhone: "+18584547397",
+  sarjitPhone: "+19736103354",
   bookingLink: process.env.BOOKING_LINK || "https://link-to-ghl-calendar", // placeholder
   locationId: process.env.GHL_LOCATION_ID!,
   vapiWebhookUrl: process.env.VAPI_WEBHOOK_URL || "",

@@ -128,24 +128,25 @@ export async function POST(req: NextRequest) {
     }
 
     // ── 5. High-score alert to Sarjit ────────────────────────────────────────
-    if (tier === "High") {
-      try {
-        // Find/create Sarjit's contact record to send via GHL SMS
-        const sarjitContact = await ghl.findContactByPhone(CONFIG.sarjitPhone);
-        if (sarjitContact) {
-          const alertMsg = highScoreAlertSMS(
-            contactName,
-            phone,
-            source || "Unknown",
-            budgetRange || "Not Disclosed",
-            timeline || "Unknown"
-          );
-          await ghl.sendSMS(sarjitContact.id, alertMsg);
-        }
-      } catch (alertErr) {
-        // Alert failure should not block the main flow
-        console.error("[new-lead] Failed to send high-score alert:", alertErr);
+    // Send alert for ALL new leads (full info)
+    try {
+      const sarjitContact = await ghl.findContactByPhone(CONFIG.sarjitPhone);
+      if (sarjitContact) {
+        const alertMsg = highScoreAlertSMS(
+          contactName,
+          phone,
+          email,
+          source || "Unknown",
+          budgetRange || "Not Disclosed",
+          timeline || "Unknown",
+          kitchenType || "",
+          stylePref || "",
+          score
+        );
+        await ghl.sendSMS(sarjitContact.id, alertMsg);
       }
+    } catch (alertErr) {
+      console.error("[new-lead] Failed to send lead alert:", alertErr);
     }
 
     // ── 6. Start speed-to-lead sequence ─────────────────────────────────────

@@ -43,11 +43,30 @@ export function threeDaySMS(firstName: string, bookingLink: string): string {
 export function highScoreAlertSMS(
   contactName: string,
   phone: string,
+  email: string,
   source: string,
   budget: string,
-  timeline: string
+  timeline: string,
+  kitchenType: string,
+  stylePref: string,
+  score: number
 ): string {
-  return `🔥 HIGH-SCORE LEAD ALERT\nName: ${contactName}\nPhone: ${phone}\nSource: ${source}\nBudget: ${budget}\nTimeline: ${timeline}\n\nFollow up immediately!`;
+  return [
+    `🔥 NEW LEAD ALERT`,
+    ``,
+    `Name: ${contactName}`,
+    `Phone: ${phone}`,
+    `Email: ${email}`,
+    `Source: ${source}`,
+    `Score: ${score}/100`,
+    ``,
+    `Budget: ${budget}`,
+    `Timeline: ${timeline}`,
+    `Kitchen: ${kitchenType || "Not specified"}`,
+    `Style: ${stylePref || "Not specified"}`,
+    ``,
+    `Follow up immediately!`,
+  ].join("\n");
 }
 
 // ─── Email Templates ──────────────────────────────────────────────────────────
