@@ -237,3 +237,30 @@ export async function findContactByPhone(
     return null;
   }
 }
+
+/** Create an opportunity (pipeline entry) for a contact */
+export async function createOpportunity(
+  contactId: string,
+  name: string,
+  pipelineId: string,
+  stageId: string,
+  monetaryValue?: number
+): Promise<{ id: string }> {
+  const locationId = process.env.GHL_LOCATION_ID;
+  const res = await fetch(`${GHL_BASE}/opportunities/`, {
+    method: "POST",
+    headers: getHeaders(),
+    body: JSON.stringify({
+      pipelineId,
+      pipelineStageId: stageId,
+      contactId,
+      locationId,
+      name,
+      status: "open",
+      monetaryValue: monetaryValue ?? 0,
+    }),
+  });
+  const data = await res.json();
+  if (!res.ok) throw new Error(data.message || "Failed to create opportunity");
+  return { id: data.opportunity?.id ?? data.id };
+}

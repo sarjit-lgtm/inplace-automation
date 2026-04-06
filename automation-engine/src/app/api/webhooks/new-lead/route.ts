@@ -149,7 +149,22 @@ export async function POST(req: NextRequest) {
       console.error("[new-lead] Failed to send lead alert:", alertErr);
     }
 
-    // ── 6. Start speed-to-lead sequence ─────────────────────────────────────
+    // ── 6. Create opportunity in Homeowner pipeline ────────────────────────
+    try {
+      const HOMEOWNER_PIPELINE_ID = "CKgx1Mzfj5CdVK6M25uh";
+      const NEW_LEAD_STAGE_ID = "8152f0aa-b510-452b-8a21-24d1b4660054";
+      await ghl.createOpportunity(
+        contactId,
+        `${contactName} - Kitchen Design`,
+        HOMEOWNER_PIPELINE_ID,
+        NEW_LEAD_STAGE_ID
+      );
+      console.log(`[new-lead] Created opportunity for ${contactName}`);
+    } catch (oppErr) {
+      console.error("[new-lead] Failed to create opportunity:", oppErr);
+    }
+
+    // ── 7. Start speed-to-lead sequence ─────────────────────────────────────
     await startSequence({
       contactId,
       contactName,
