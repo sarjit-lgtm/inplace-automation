@@ -84,6 +84,13 @@ export default function QuoteDetailPage({ params }: { params: Promise<{ id: stri
           >
             Download PDF
           </a>
+          <a
+            href={`/api/quotes/${id}/proposal`}
+            target="_blank"
+            className="border px-4 py-2 rounded hover:bg-gray-100"
+          >
+            View Proposal
+          </a>
           {quote.status === "draft" && (
             <button
               onClick={handleSendProposal}
