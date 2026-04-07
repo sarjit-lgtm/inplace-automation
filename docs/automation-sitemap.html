@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Inplace Studio — Automation System Map</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0a0a0a;color:#e0e0e0;min-height:100vh;overflow-x:hidden}
+
+.header{text-align:center;padding:60px 20px 40px;border-bottom:1px solid #1a1a1a}
+.header h1{font-size:32px;font-weight:300;letter-spacing:.15em;text-transform:uppercase;color:#c9a87c;margin-bottom:8px}
+.header p{font-size:13px;color:#666;letter-spacing:.1em}
+.header .live-badge{display:inline-block;background:#1a3a1a;color:#4ade80;font-size:10px;letter-spacing:.15em;text-transform:uppercase;padding:4px 12px;border:1px solid #2a5a2a;margin-top:16px}
+
+.container{max-width:1400px;margin:0 auto;padding:40px 20px}
+
+/* Section titles */
+.section{margin-bottom:60px}
+.section-title{display:flex;align-items:center;gap:16px;margin-bottom:24px}
+.section-title h2{font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:#c9a87c;font-weight:500}
+.section-title::after{content:'';flex:1;height:1px;background:#1a1a1a}
+.section-subtitle{font-size:13px;color:#555;margin-bottom:24px;padding-left:2px}
+
+/* Cards */
+.grid{display:grid;gap:16px}
+.grid-2{grid-template-columns:repeat(2,1fr)}
+.grid-3{grid-template-columns:repeat(3,1fr)}
+.grid-4{grid-template-columns:repeat(4,1fr)}
+.grid-5{grid-template-columns:repeat(5,1fr)}
+.grid-7{grid-template-columns:repeat(7,1fr)}
+
+.card{background:#111;border:1px solid #1a1a1a;padding:24px;transition:all .3s;position:relative;overflow:hidden}
+.card:hover{border-color:#333;transform:translateY(-2px)}
+.card::before{content:'';position:absolute;bottom:0;left:0;right:0;height:2px;background:#c9a87c;transform:scaleX(0);transition:transform .3s}
+.card:hover::before{transform:scaleX(1)}
+
+.card-icon{width:40px;height:40px;border:1px solid #222;display:flex;align-items:center;justify-content:center;margin-bottom:16px;font-size:18px}
+.card-title{font-size:14px;font-weight:500;color:#e0e0e0;margin-bottom:6px}
+.card-desc{font-size:11px;color:#555;line-height:1.7}
+.card-status{display:inline-block;font-size:9px;letter-spacing:.15em;text-transform:uppercase;padding:3px 8px;margin-top:12px;border:1px solid}
+.card-status.live{color:#4ade80;border-color:#2a5a2a;background:#0a1a0a}
+.card-status.pending{color:#facc15;border-color:#5a4a0a;background:#1a1a0a}
+.card-status.config{color:#60a5fa;border-color:#1a3a5a;background:#0a1a2a}
+
+/* Flow arrows */
+.flow{display:flex;align-items:center;justify-content:center;padding:20px 0}
+.flow-arrow{color:#333;font-size:24px;letter-spacing:4px}
+.flow-label{font-size:10px;color:#555;letter-spacing:.2em;text-transform:uppercase;text-align:center;padding:0 16px}
+
+/* Big flow diagram */
+.flow-diagram{background:#0d0d0d;border:1px solid #1a1a1a;padding:40px;margin:30px 0}
+.flow-row{display:flex;align-items:center;justify-content:center;gap:12px;margin:12px 0;flex-wrap:wrap}
+.flow-box{background:#111;border:1px solid #222;padding:12px 20px;font-size:12px;color:#999;text-align:center;min-width:140px;transition:all .3s}
+.flow-box:hover{border-color:#c9a87c;color:#c9a87c}
+.flow-box.highlight{border-color:#c9a87c;color:#c9a87c;background:#1a1510}
+.flow-box.green{border-color:#2a5a2a;color:#4ade80;background:#0a1a0a}
+.flow-connector{color:#333;font-size:18px}
+
+/* Sequence timeline */
+.timeline{display:flex;gap:0;margin:20px 0}
+.timeline-step{flex:1;text-align:center;position:relative;padding:20px 8px}
+.timeline-step::before{content:'';position:absolute;top:30px;left:50%;right:-50%;height:1px;background:#222}
+.timeline-step:last-child::before{display:none}
+.timeline-dot{width:12px;height:12px;border-radius:50%;border:2px solid #c9a87c;background:#0a0a0a;margin:0 auto 12px;position:relative;z-index:1}
+.timeline-step.active .timeline-dot{background:#c9a87c}
+.timeline-time{font-size:10px;color:#c9a87c;letter-spacing:.1em;margin-bottom:6px;font-weight:500}
+.timeline-action{font-size:11px;color:#666;line-height:1.5}
+
+/* Pipeline stages */
+.pipeline{display:flex;gap:2px;margin:20px 0;overflow-x:auto;padding-bottom:10px}
+.stage{flex:1;min-width:100px;background:#111;border:1px solid #1a1a1a;padding:14px 8px;text-align:center;position:relative;transition:all .3s}
+.stage:hover{border-color:#c9a87c;background:#1a1510}
+.stage-num{font-size:9px;color:#c9a87c;letter-spacing:.15em;margin-bottom:4px}
+.stage-name{font-size:10px;color:#999;line-height:1.4}
+.stage::after{content:'\203A';position:absolute;right:-6px;top:50%;transform:translateY(-50%);color:#333;font-size:14px;z-index:1}
+.stage:last-child::after{display:none}
+
+/* Team section */
+.team-card{background:#111;border:1px solid #1a1a1a;padding:20px;display:flex;gap:16px;align-items:flex-start}
+.team-avatar{width:44px;height:44px;border:1px solid #c9a87c;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:300;color:#c9a87c;flex-shrink:0}
+.team-name{font-size:14px;font-weight:500;color:#e0e0e0;margin-bottom:4px}
+.team-role{font-size:11px;color:#c9a87c;letter-spacing:.1em;margin-bottom:8px}
+.team-tasks{list-style:none;font-size:11px;color:#555;line-height:2}
+.team-tasks li::before{content:'\2022';color:#c9a87c;margin-right:8px}
+
+/* Stats */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:20px 0}
+.stat{background:#111;border:1px solid #1a1a1a;padding:24px;text-align:center}
+.stat-num{font-size:36px;font-weight:300;color:#c9a87c;margin-bottom:4px}
+.stat-label{font-size:10px;color:#555;letter-spacing:.2em;text-transform:uppercase}
+
+/* Links */
+.link-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.link-card{background:#111;border:1px solid #1a1a1a;padding:20px;text-decoration:none;color:inherit;transition:all .3s;display:block}
+.link-card:hover{border-color:#c9a87c;transform:translateY(-2px)}
+.link-url{font-size:11px;color:#c9a87c;word-break:break-all;margin-top:8px;font-family:monospace}
+
+/* Webhook table */
+.webhook-table{width:100%;border-collapse:collapse;margin:20px 0}
+.webhook-table th{font-size:9px;letter-spacing:.2em;text-transform:uppercase;color:#c9a87c;text-align:left;padding:12px 16px;border-bottom:1px solid #222;font-weight:500}
+.webhook-table td{font-size:12px;color:#999;padding:12px 16px;border-bottom:1px solid #111}
+.webhook-table tr:hover td{color:#e0e0e0;background:#0d0d0d}
+.webhook-table code{font-family:monospace;font-size:11px;color:#60a5fa;background:#0a1a2a;padding:2px 6px}
+
+@media(max-width:900px){
+  .grid-3,.grid-4,.grid-5,.grid-7{grid-template-columns:repeat(2,1fr)}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .pipeline{flex-wrap:wrap}
+  .stage{min-width:calc(50% - 2px)}
+  .stage::after{display:none}
+  .timeline{flex-wrap:wrap}
+  .timeline-step::before{display:none}
+  .link-grid{grid-template-columns:1fr}
+}
+@media(max-width:600px){
+  .grid-2,.grid-3,.grid-4,.grid-5,.grid-7{grid-template-columns:1fr}
+  .flow-row{flex-direction:column}
+}
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <h1>Inplace Studio</h1>
+  <p>Complete Automation System Map</p>
+  <div class="live-badge">System Active &mdash; La Jolla Location</div>
+</div>
+
+<div class="container">
+
+<!-- ═══ STATS ═══ -->
+<div class="section">
+  <div class="section-title"><h2>System Overview</h2></div>
+  <div class="stats">
+    <div class="stat"><div class="stat-num">7</div><div class="stat-label">Lead Sources</div></div>
+    <div class="stat"><div class="stat-num">14</div><div class="stat-label">Pipeline Stages</div></div>
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Auto Follow-ups</div></div>
+    <div class="stat"><div class="stat-num">2</div><div class="stat-label">Apps Deployed</div></div>
+  </div>
+</div>
+
+<!-- ═══ LEAD SOURCES ═══ -->
+<div class="section">
+  <div class="section-title"><h2>01 &mdash; Lead Sources</h2></div>
+  <p class="section-subtitle">Every lead from every channel flows into one automation engine</p>
+  <div class="grid grid-7">
+    <div class="card">
+      <div class="card-icon">&#9742;</div>
+      <div class="card-title">Phone Call</div>
+      <div class="card-desc">RingCentral &rarr; Vapi AI answers, qualifies, sends to engine</div>
+      <div class="card-status live">Live</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#128694;</div>
+      <div class="card-title">Walk-In</div>
+      <div class="card-desc">Showroom tablet form &rarr; GHL workflow &rarr; engine</div>
+      <div class="card-status config">Ready</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#127758;</div>
+      <div class="card-title">Website Form</div>
+      <div class="card-desc">inplacestudio.com 8-step form &rarr; automation hook &rarr; engine</div>
+      <div class="card-status live">Live</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">G</div>
+      <div class="card-title">Google Ads</div>
+      <div class="card-desc">Landing page form with UTM tracking &rarr; engine</div>
+      <div class="card-status config">Ready</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">f</div>
+      <div class="card-title">Meta Ads</div>
+      <div class="card-desc">FB/IG Lead Ads &rarr; Pebble Connect &rarr; engine</div>
+      <div class="card-status pending">Pending</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#128172;</div>
+      <div class="card-title">Website Chat</div>
+      <div class="card-desc">GHL chat widget on website &rarr; engine</div>
+      <div class="card-status pending">Pending</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">&#128205;</div>
+      <div class="card-title">Google Business</div>
+      <div class="card-desc">GBP messages &rarr; Pebble Connect &rarr; engine</div>
+      <div class="card-status pending">Pending</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ FLOW DIAGRAM ═══ -->
+<div class="section">
+  <div class="section-title"><h2>02 &mdash; System Flow</h2></div>
+  <p class="section-subtitle">How a lead moves through the entire system</p>
+  <div class="flow-diagram">
+    <div class="flow-row">
+      <div class="flow-box">Phone Call</div>
+      <div class="flow-box">Walk-In</div>
+      <div class="flow-box">Website Form</div>
+      <div class="flow-box">Google Ads</div>
+      <div class="flow-box">Meta Ads</div>
+      <div class="flow-box">Chat</div>
+      <div class="flow-box">GBP</div>
+    </div>
+    <div class="flow-row"><div class="flow-connector">&darr;&darr;&darr;&darr;&darr;&darr;&darr;</div></div>
+    <div class="flow-row">
+      <div class="flow-box highlight" style="min-width:300px">Automation Engine<br><span style="font-size:10px;color:#666">inplace-automation-engine.vercel.app</span></div>
+    </div>
+    <div class="flow-row"><div class="flow-connector">&darr;</div></div>
+    <div class="flow-row">
+      <div class="flow-box green">Create GHL Contact</div>
+      <div class="flow-connector">&rarr;</div>
+      <div class="flow-box green">Score Lead (0-100)</div>
+      <div class="flow-connector">&rarr;</div>
+      <div class="flow-box green">Create Opportunity</div>
+      <div class="flow-connector">&rarr;</div>
+      <div class="flow-box green">SMS Alert to Sarjit</div>
+    </div>
+    <div class="flow-row"><div class="flow-connector">&darr;</div></div>
+    <div class="flow-row">
+      <div class="flow-box highlight" style="min-width:300px">Speed-to-Lead Sequence Starts</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ LEAD SCORING ═══ -->
+<div class="section">
+  <div class="section-title"><h2>03 &mdash; Lead Scoring</h2></div>
+  <p class="section-subtitle">Every lead scored 0-100 based on four factors</p>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-title">Source Score</div>
+      <div class="card-desc" style="line-height:2.2">
+        Referral: 35 pts<br>
+        Walk-In: 30 pts<br>
+        Google Ads: 30 pts<br>
+        Phone: 25 pts<br>
+        GBP: 25 pts<br>
+        Website Chat: 20 pts<br>
+        Meta: 15 pts
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Budget Score</div>
+      <div class="card-desc" style="line-height:2.2">
+        $200K+: 25 pts<br>
+        $100K-$200K: 20 pts<br>
+        $50K-$100K: 15 pts<br>
+        $25K-$50K: 10 pts<br>
+        Under $25K: 5 pts<br>
+        Not Disclosed: 10 pts
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Timeline Score</div>
+      <div class="card-desc" style="line-height:2.2">
+        ASAP: 25 pts<br>
+        1-3 Months: 20 pts<br>
+        3-6 Months: 15 pts<br>
+        6-12 Months: 10 pts<br>
+        12+ Months: 5 pts
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Result Tiers</div>
+      <div class="card-desc" style="line-height:2.2">
+        <span style="color:#ef4444">70+ = HIGH</span><br>
+        Alert SMS to Sarjit immediately<br><br>
+        <span style="color:#facc15">50-70 = MEDIUM</span><br>
+        Standard follow-up<br><br>
+        <span style="color:#666">Under 50 = LOW</span><br>
+        Nurture sequence
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ SPEED TO LEAD ═══ -->
+<div class="section">
+  <div class="section-title"><h2>04 &mdash; Speed-to-Lead Sequence</h2></div>
+  <p class="section-subtitle">Automated follow-up sequence &mdash; stops instantly when lead replies</p>
+  <div class="timeline">
+    <div class="timeline-step active">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">0 sec</div>
+      <div class="timeline-action">SMS welcome<br>+ Email with<br>portfolio</div>
+    </div>
+    <div class="timeline-step active">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">5 min</div>
+      <div class="timeline-action">Vapi AI<br>callback or<br>follow-up SMS</div>
+    </div>
+    <div class="timeline-step active">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">1 hour</div>
+      <div class="timeline-action">Portfolio<br>email matching<br>style pref</div>
+    </div>
+    <div class="timeline-step active">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">24 hours</div>
+      <div class="timeline-action">"Checking in"<br>SMS</div>
+    </div>
+    <div class="timeline-step active">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">3 days</div>
+      <div class="timeline-action">"Saved a<br>spot for you"<br>SMS</div>
+    </div>
+    <div class="timeline-step">
+      <div class="timeline-dot"></div>
+      <div class="timeline-time">7 days</div>
+      <div class="timeline-action">Tag "Nurture"<br>Monthly<br>newsletters</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ PIPELINE ═══ -->
+<div class="section">
+  <div class="section-title"><h2>05 &mdash; Pipeline Stages</h2></div>
+  <p class="section-subtitle">Cabinetry Sales to Homeowner &mdash; automated notifications at each stage</p>
+  <div class="pipeline">
+    <div class="stage"><div class="stage-num">01</div><div class="stage-name">New Lead</div></div>
+    <div class="stage"><div class="stage-num">02</div><div class="stage-name">Contacted</div></div>
+    <div class="stage"><div class="stage-num">03</div><div class="stage-name">Qualified</div></div>
+    <div class="stage"><div class="stage-num">04</div><div class="stage-name">Consult Booked</div></div>
+    <div class="stage"><div class="stage-num">05</div><div class="stage-name">Consult Done</div></div>
+    <div class="stage"><div class="stage-num">06</div><div class="stage-name">Measure Scheduled</div></div>
+    <div class="stage"><div class="stage-num">07</div><div class="stage-name">Measure Done</div></div>
+    <div class="stage"><div class="stage-num">08</div><div class="stage-name">Design + Budget</div></div>
+    <div class="stage"><div class="stage-num">09</div><div class="stage-name">Proposal Sent</div></div>
+    <div class="stage"><div class="stage-num">10</div><div class="stage-name">Revisions</div></div>
+    <div class="stage"><div class="stage-num">11</div><div class="stage-name">Contract Sent</div></div>
+    <div class="stage"><div class="stage-num">12</div><div class="stage-name">Won</div></div>
+    <div class="stage"><div class="stage-num">13</div><div class="stage-name">Lost</div></div>
+    <div class="stage"><div class="stage-num">14</div><div class="stage-name">Nurture</div></div>
+  </div>
+</div>
+
+<!-- ═══ VAPI AI ═══ -->
+<div class="section">
+  <div class="section-title"><h2>06 &mdash; AI Voice Agent (Vapi)</h2></div>
+  <p class="section-subtitle">Aria &mdash; Inplace Studio's AI receptionist</p>
+  <div class="grid grid-3">
+    <div class="card">
+      <div class="card-title">Inbound Calls</div>
+      <div class="card-desc">Answers when team is busy. Qualifies leads with name, budget, timeline, project type. Sends data to automation engine.</div>
+      <div class="card-status live">Live</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Phone Number</div>
+      <div class="card-desc" style="font-family:monospace;font-size:16px;color:#c9a87c;margin-top:8px">(858) 666-9656</div>
+      <div class="card-desc" style="margin-top:8px">Voice: Clara (30s, American, Conversational)</div>
+      <div class="card-status live">Live</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Capabilities</div>
+      <div class="card-desc" style="line-height:2.2">
+        Qualify new leads<br>
+        Collect contact info<br>
+        Send to automation engine<br>
+        Book consultations<br>
+        Transfer to team<br>
+        Fallback: (973) 610-3354
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ APPS ═══ -->
+<div class="section">
+  <div class="section-title"><h2>07 &mdash; Deployed Applications</h2></div>
+  <div class="link-grid">
+    <div class="link-card">
+      <div class="card-title">Quote Builder</div>
+      <div class="card-desc">Supplier catalog, markup engine, PDF proposals, GHL integration</div>
+      <div class="card-status live">Live</div>
+      <div class="link-url">inplace-quote-builder-git-main-sarjit-lgtms-projects.vercel.app</div>
+    </div>
+    <div class="link-card">
+      <div class="card-title">Automation Engine</div>
+      <div class="card-desc">Lead scoring, speed-to-lead, webhooks, GHL contact + opportunity creation</div>
+      <div class="card-status live">Live</div>
+      <div class="link-url">inplace-automation-engine.vercel.app</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ WEBHOOK ENDPOINTS ═══ -->
+<div class="section">
+  <div class="section-title"><h2>08 &mdash; Webhook Endpoints</h2></div>
+  <table class="webhook-table">
+    <thead>
+      <tr><th>Endpoint</th><th>Method</th><th>Purpose</th><th>Source</th><th>Status</th></tr>
+    </thead>
+    <tbody>
+      <tr><td><code>/api/webhooks/new-lead</code></td><td>POST</td><td>All new leads from any source</td><td>Website, GHL, Vapi, Pebble</td><td><span class="card-status live">Live</span></td></tr>
+      <tr><td><code>/api/webhooks/missed-call</code></td><td>POST</td><td>Missed call text-back</td><td>RingCentral</td><td><span class="card-status config">Ready</span></td></tr>
+      <tr><td><code>/api/webhooks/reply-received</code></td><td>POST</td><td>Stop sequence when lead replies</td><td>GHL inbound SMS</td><td><span class="card-status config">Ready</span></td></tr>
+      <tr><td><code>/api/webhooks/stage-change</code></td><td>POST</td><td>Pipeline stage notifications</td><td>GHL pipeline</td><td><span class="card-status config">Ready</span></td></tr>
+      <tr><td><code>/api/webhooks/process-sequences</code></td><td>GET</td><td>Cron &mdash; advance follow-up steps</td><td>cron-job.org (every 1 min)</td><td><span class="card-status live">Live</span></td></tr>
+      <tr><td><code>/api/health</code></td><td>GET</td><td>Health check + sequence stats</td><td>Internal</td><td><span class="card-status live">Live</span></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ═══ GHL CUSTOM FIELDS ═══ -->
+<div class="section">
+  <div class="section-title"><h2>09 &mdash; GHL Custom Fields (27 fields)</h2></div>
+  <div class="grid grid-4">
+    <div class="card">
+      <div class="card-title">Lead Tracking</div>
+      <div class="card-desc" style="line-height:2">Lead Source<br>UTM Source<br>UTM Medium<br>UTM Campaign<br>UTM Term<br>Lead Score</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Project Details</div>
+      <div class="card-desc" style="line-height:2">Kitchen Type<br>Budget Range<br>Timeline<br>Kitchen Size<br>Style Preference<br>Design Software File</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Supplier &amp; Orders</div>
+      <div class="card-desc" style="line-height:2">Cabinet Supplier<br>PO Number<br>Est. Delivery Date<br>Actual Delivery Date<br>Install Start/End<br>Installer Name</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Financial</div>
+      <div class="card-desc" style="line-height:2">Quote Amount<br>Contract Amount<br>Deposit Amount/Paid<br>Mid-Payment Amt/Paid<br>Final Payment Amt/Paid</div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TEAM ═══ -->
+<div class="section">
+  <div class="section-title"><h2>10 &mdash; Team &amp; Roles</h2></div>
+  <div class="grid grid-2">
+    <div class="team-card">
+      <div class="team-avatar">SS</div>
+      <div>
+        <div class="team-name">Sarjit Shah</div>
+        <div class="team-role">Owner &mdash; Sales / Marketing</div>
+        <ul class="team-tasks">
+          <li>Receives all lead alert SMS</li>
+          <li>Monitors ad ROI</li>
+          <li>Handles consultations</li>
+          <li>Approves review responses</li>
+        </ul>
+      </div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">NS</div>
+      <div>
+        <div class="team-name">Nikita Shah</div>
+        <div class="team-role">Owner &mdash; Admin / Estimating</div>
+        <ul class="team-tasks">
+          <li>Creates quotes in Quote Builder</li>
+          <li>Manages supplier pricing</li>
+          <li>Places supplier orders</li>
+          <li>Tracks payments</li>
+        </ul>
+      </div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">CB</div>
+      <div>
+        <div class="team-name">Celeste Bryant</div>
+        <div class="team-role">Designer / Sales</div>
+        <ul class="team-tasks">
+          <li>Handles consultations</li>
+          <li>Manages design phase</li>
+          <li>Presents proposals</li>
+        </ul>
+      </div>
+    </div>
+    <div class="team-card">
+      <div class="team-avatar">FM</div>
+      <div>
+        <div class="team-name">Fernando</div>
+        <div class="team-role">Project Manager</div>
+        <ul class="team-tasks">
+          <li>Schedules installations</li>
+          <li>Coordinates subcontractors</li>
+          <li>Manages punch lists</li>
+          <li>Handles delivery/walkthrough</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ REMAINING PHASES ═══ -->
+<div class="section">
+  <div class="section-title"><h2>11 &mdash; Remaining Phases</h2></div>
+  <div class="grid grid-3">
+    <div class="card">
+      <div class="card-title">Phase 5: Contract &amp; Lifecycle</div>
+      <div class="card-desc">BoloForms auto-contracts, payment collection, supplier ordering, delivery/install notifications, post-completion review requests</div>
+      <div class="card-status pending">Upcoming</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Phase 6: Marketing &amp; Dashboards</div>
+      <div class="card-desc">Nurture campaigns, ad ROI tracking, monthly reports, team dashboards for Sarjit, Nikita, Celeste, Fernando</div>
+      <div class="card-status pending">Upcoming</div>
+    </div>
+    <div class="card">
+      <div class="card-title">Multi-Location Expansion</div>
+      <div class="card-desc">Replicate automation to SieMatic LA (West Hollywood) and SieMatic Laguna Beach locations</div>
+      <div class="card-status pending">Upcoming</div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<div style="text-align:center;padding:40px 20px 60px;border-top:1px solid #1a1a1a;margin-top:40px">
+  <p style="font-size:10px;color:#333;letter-spacing:.2em;text-transform:uppercase">Inplace Studio Automation &mdash; Built 2026</p>
+</div>
+
+</body>
+</html>
