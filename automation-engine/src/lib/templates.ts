@@ -49,7 +49,8 @@ export function highScoreAlertSMS(
   timeline: string,
   kitchenType: string,
   stylePref: string,
-  score: number
+  score: number,
+  preferredContact?: string
 ): string {
   return [
     `🔥 NEW LEAD ALERT`,
@@ -64,6 +65,7 @@ export function highScoreAlertSMS(
     `Timeline: ${timeline}`,
     `Kitchen: ${kitchenType || "Not specified"}`,
     `Style: ${stylePref || "Not specified"}`,
+    `Prefers: ${preferredContact || "Not specified"}`,
     ``,
     `Follow up immediately!`,
   ].join("\n");
@@ -76,7 +78,7 @@ export interface EmailTemplate {
   html: string;
 }
 
-/** Base HTML layout for all Inplace Studio emails */
+/** Base HTML layout for all Inplace Studio emails — luxury aesthetic */
 function baseEmail(preheader: string, body: string): string {
   return `<!DOCTYPE html>
 <html lang="en">
@@ -84,33 +86,68 @@ function baseEmail(preheader: string, body: string): string {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Inplace Studio</title>
-  <style>
-    body { margin: 0; padding: 0; background: #f5f5f5; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
-    .wrapper { max-width: 600px; margin: 0 auto; background: #ffffff; }
-    .header { background: #000000; padding: 32px 40px; }
-    .header h1 { color: #ffffff; margin: 0; font-size: 22px; font-weight: 600; letter-spacing: 2px; text-transform: uppercase; }
-    .body { padding: 40px; color: #222222; font-size: 16px; line-height: 1.7; }
-    .body p { margin: 0 0 18px; }
-    .cta { display: inline-block; margin: 24px 0; padding: 14px 32px; background: #000000; color: #ffffff !important; text-decoration: none; font-size: 15px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; border-radius: 2px; }
-    .footer { background: #f0f0f0; padding: 24px 40px; font-size: 12px; color: #888888; text-align: center; line-height: 1.6; }
-    .footer a { color: #555555; }
-    .divider { border: none; border-top: 1px solid #eeeeee; margin: 28px 0; }
-  </style>
 </head>
-<body>
-  <span style="display:none;font-size:1px;color:#ffffff;max-height:0;">${preheader}</span>
-  <div class="wrapper">
-    <div class="header">
-      <h1>Inplace Studio</h1>
-    </div>
-    <div class="body">
-      ${body}
-    </div>
-    <div class="footer">
-      <p>Inplace Studio &mdash; La Jolla, CA</p>
-      <p>You're receiving this because you reached out about a kitchen project.</p>
-    </div>
-  </div>
+<body style="margin:0;padding:0;background:#f7f6f3;font-family:Georgia,'Times New Roman',serif;">
+  <span style="display:none;font-size:1px;color:#f7f6f3;max-height:0;overflow:hidden;">${preheader}</span>
+
+  <!-- Outer container -->
+  <table width="100%" cellpadding="0" cellspacing="0" style="background:#f7f6f3;padding:40px 20px;">
+    <tr><td align="center">
+      <table width="600" cellpadding="0" cellspacing="0" style="background:#ffffff;max-width:600px;width:100%;">
+
+        <!-- Top accent line -->
+        <tr><td style="height:3px;background:#8c6b4e;"></td></tr>
+
+        <!-- Header -->
+        <tr><td style="padding:48px 50px 32px;text-align:center;border-bottom:1px solid #eee8e0;">
+          <p style="margin:0;font-size:9px;letter-spacing:4px;text-transform:uppercase;color:#8c6b4e;font-family:Helvetica,Arial,sans-serif;">Southern California's Premier</p>
+          <h1 style="margin:12px 0 0;font-size:28px;font-weight:400;color:#1d2327;letter-spacing:3px;text-transform:uppercase;font-family:Georgia,serif;">INPLACE STUDIO</h1>
+          <p style="margin:8px 0 0;font-size:11px;letter-spacing:2px;color:#a09890;font-family:Helvetica,Arial,sans-serif;">KITCHEN DESIGN &middot; CABINETRY &middot; INSTALLATION</p>
+        </td></tr>
+
+        <!-- Body -->
+        <tr><td style="padding:44px 50px 40px;color:#3a3632;font-size:15px;line-height:1.85;font-family:Georgia,'Times New Roman',serif;">
+          ${body}
+        </td></tr>
+
+        <!-- Showrooms -->
+        <tr><td style="padding:0 50px 40px;">
+          <table width="100%" cellpadding="0" cellspacing="0" style="border-top:1px solid #eee8e0;padding-top:28px;">
+            <tr>
+              <td style="font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#8c6b4e;font-family:Helvetica,Arial,sans-serif;padding-bottom:16px;" colspan="3">Our Showrooms</td>
+            </tr>
+            <tr>
+              <td style="font-size:12px;color:#666;font-family:Helvetica,Arial,sans-serif;line-height:1.7;padding-right:16px;vertical-align:top;" width="33%">
+                <strong style="color:#1d2327;font-size:11px;letter-spacing:1px;">LA JOLLA</strong><br>
+                7739 Fay Ave<br>La Jolla, CA 92037
+              </td>
+              <td style="font-size:12px;color:#666;font-family:Helvetica,Arial,sans-serif;line-height:1.7;padding-right:16px;vertical-align:top;" width="33%">
+                <strong style="color:#1d2327;font-size:11px;letter-spacing:1px;">LAGUNA BEACH</strong><br>
+                465 Forest Ave<br>Laguna Beach, CA 92651
+              </td>
+              <td style="font-size:12px;color:#666;font-family:Helvetica,Arial,sans-serif;line-height:1.7;vertical-align:top;" width="33%">
+                <strong style="color:#1d2327;font-size:11px;letter-spacing:1px;">WEST HOLLYWOOD</strong><br>
+                639 N La Peer Dr<br>West Hollywood, CA 90069
+              </td>
+            </tr>
+          </table>
+        </td></tr>
+
+        <!-- Footer -->
+        <tr><td style="background:#1d2327;padding:28px 50px;text-align:center;">
+          <p style="margin:0;font-size:10px;letter-spacing:2px;color:#8c6b4e;font-family:Helvetica,Arial,sans-serif;text-transform:uppercase;">Inplace Studio</p>
+          <p style="margin:8px 0 0;font-size:11px;color:#666;font-family:Helvetica,Arial,sans-serif;">
+            <a href="https://inplacestudio.com" style="color:#999;text-decoration:none;">inplacestudio.com</a> &nbsp;&middot;&nbsp;
+            <a href="tel:+18584547397" style="color:#999;text-decoration:none;">(858) 454-7397</a> &nbsp;&middot;&nbsp;
+            <a href="mailto:info@inplacestudio.com" style="color:#999;text-decoration:none;">info@inplacestudio.com</a>
+          </p>
+        </td></tr>
+
+        <!-- Bottom accent line -->
+        <tr><td style="height:3px;background:#8c6b4e;"></td></tr>
+      </table>
+    </td></tr>
+  </table>
 </body>
 </html>`;
 }
@@ -120,19 +157,54 @@ export function welcomeEmail(
   firstName: string,
   bookingLink: string
 ): EmailTemplate {
-  const subject = `Welcome to Inplace Studio, ${firstName} — Let's Build Something Beautiful`;
+  const subject = `${firstName}, Your Kitchen Journey Begins Here`;
   const body = `
-    <p>Hi ${firstName},</p>
-    <p>Thank you for reaching out to <strong>Inplace Studio</strong>! We're thrilled to hear about your kitchen project and can't wait to bring your vision to life.</p>
-    <p>At Inplace Studio, we design and build high-end kitchens that blend functionality with stunning aesthetics — every project is crafted with meticulous attention to detail.</p>
-    <p>To get started, let's schedule a complimentary discovery consultation where we'll discuss your ideas, timeline, and budget.</p>
-    <p style="text-align:center;">
-      <a class="cta" href="${bookingLink}">Book Your Free Consultation</a>
+    <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#8c6b4e;font-family:Helvetica,Arial,sans-serif;margin:0 0 20px;">Welcome</p>
+
+    <p style="margin:0 0 20px;">Dear ${firstName},</p>
+
+    <p style="margin:0 0 20px;">Thank you for reaching out to Inplace Studio. We're honoured by your interest and excited to learn more about your vision.</p>
+
+    <p style="margin:0 0 20px;">For over a decade, we've partnered with discerning homeowners across Southern California to create kitchens that are as functional as they are beautiful — working with the world's finest cabinetry houses including <strong>SieMatic</strong>, <strong>Woodmode</strong>, and <strong>Renzo Restelli</strong>.</p>
+
+    <!-- Divider -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin:32px 0;">
+      <tr><td style="border-top:1px solid #eee8e0;"></td></tr>
+    </table>
+
+    <p style="font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#8c6b4e;font-family:Helvetica,Arial,sans-serif;margin:0 0 16px;">Your Next Step</p>
+
+    <p style="margin:0 0 24px;">We'd love to invite you for a <strong>complimentary design consultation</strong> at one of our showrooms. During this private session, you'll:</p>
+
+    <table cellpadding="0" cellspacing="0" style="margin:0 0 28px;">
+      <tr>
+        <td style="padding:8px 0;color:#8c6b4e;font-size:18px;vertical-align:top;width:24px;">&#9672;</td>
+        <td style="padding:8px 0 8px 8px;font-size:14px;color:#3a3632;">Experience our curated material library and cabinetry displays</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#8c6b4e;font-size:18px;vertical-align:top;width:24px;">&#9672;</td>
+        <td style="padding:8px 0 8px 8px;font-size:14px;color:#3a3632;">Discuss your project scope, aesthetic, and timeline with a senior designer</td>
+      </tr>
+      <tr>
+        <td style="padding:8px 0;color:#8c6b4e;font-size:18px;vertical-align:top;width:24px;">&#9672;</td>
+        <td style="padding:8px 0 8px 8px;font-size:14px;color:#3a3632;">Receive a personalised overview of brands and solutions that suit your vision</td>
+      </tr>
+    </table>
+
+    <p style="text-align:center;margin:0 0 32px;">
+      <a href="${bookingLink}" style="display:inline-block;padding:16px 44px;background:#8c6b4e;color:#ffffff;text-decoration:none;font-size:11px;font-weight:600;letter-spacing:3px;text-transform:uppercase;font-family:Helvetica,Arial,sans-serif;">Book Your Consultation</a>
     </p>
-    <hr class="divider" />
-    <p>Have questions? Simply reply to this email or give us a call — we're here to help.</p>
-    <p>Looking forward to connecting!</p>
-    <p>Warm regards,<br /><strong>The Inplace Studio Team</strong></p>
+
+    <!-- Divider -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin:24px 0;">
+      <tr><td style="border-top:1px solid #eee8e0;"></td></tr>
+    </table>
+
+    <p style="margin:0 0 8px;font-size:14px;color:#666;">Have questions? Simply reply to this email or call us directly.</p>
+
+    <p style="margin:28px 0 0;font-size:14px;">With warm regards,</p>
+    <p style="margin:4px 0 0;font-size:14px;"><strong style="color:#1d2327;">The Inplace Studio Team</strong></p>
+    <p style="margin:2px 0 0;font-size:12px;color:#8c6b4e;font-family:Helvetica,Arial,sans-serif;letter-spacing:1px;">Crafting Extraordinary Kitchens Since 2012</p>
   `;
   return { subject, html: baseEmail(subject, body) };
 }

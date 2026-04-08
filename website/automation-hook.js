@@ -47,6 +47,7 @@
       timeline: TIMELINE_MAP[getCardValue("ips-s7-time")] || "",
       kitchenType: NATURE_MAP[getCardValue("ips-s1-nature")] || "",
       stylePref: STYLE_MAP[getCardValue("ips-s2-style")] || "",
+      preferredContact: getCardValue("ips-s8-contact") || "",
       utmSource: new URLSearchParams(window.location.search).get("utm_source") || "",
       utmMedium: new URLSearchParams(window.location.search).get("utm_medium") || "",
       utmCampaign: new URLSearchParams(window.location.search).get("utm_campaign") || "",

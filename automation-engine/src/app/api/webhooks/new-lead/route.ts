@@ -28,6 +28,7 @@ const NewLeadSchema = z.object({
   timeline: z.string().optional().default(""),
   kitchenType: z.string().optional().default(""),
   stylePref: z.string().optional().default(""),
+  preferredContact: z.string().optional().default(""),
   utmSource: z.string().optional().default(""),
   utmMedium: z.string().optional().default(""),
   utmCampaign: z.string().optional().default(""),
@@ -65,6 +66,7 @@ export async function POST(req: NextRequest) {
     timeline,
     kitchenType,
     stylePref,
+    preferredContact,
     utmSource,
     utmMedium,
     utmCampaign,
@@ -141,7 +143,8 @@ export async function POST(req: NextRequest) {
           timeline || "Unknown",
           kitchenType || "",
           stylePref || "",
-          score
+          score,
+          preferredContact || ""
         );
         await ghl.sendSMS(sarjitContact.id, alertMsg);
       }
@@ -164,18 +167,27 @@ export async function POST(req: NextRequest) {
       console.error("[new-lead] Failed to create opportunity:", oppErr);
     }
 
-    // ── 7. Send client welcome SMS + email immediately ────────────────────
+    // ── 7. Send client welcome messages based on preferred contact method ──
     try {
       const { instantLeadSMS, welcomeEmail } = await import("@/lib/templates");
+      const pref = (preferredContact || "").toLowerCase();
 
-      // Send welcome SMS to the lead
-      await ghl.sendSMS(contactId, instantLeadSMS(firstName, CONFIG.bookingLink));
-      console.log(`[new-lead] Sent welcome SMS to ${contactName}`);
+      // Determine what to send based on preference
+      const sendSms = !pref || pref === "phone" || pref === "text" || pref === "studio";
+      const sendMail = !pref || pref === "email" || pref === "studio";
 
-      // Send welcome email to the lead
-      const email_tpl = welcomeEmail(firstName, CONFIG.bookingLink);
-      await ghl.sendEmail(contactId, email_tpl.subject, email_tpl.html);
-      console.log(`[new-lead] Sent welcome email to ${contactName}`);
+      if (sendSms) {
+        await ghl.sendSMS(contactId, instantLeadSMS(firstName, CONFIG.bookingLink));
+        console.log(`[new-lead] Sent welcome SMS to ${contactName}`);
+      }
+
+      if (sendMail) {
+        const email_tpl = welcomeEmail(firstName, CONFIG.bookingLink);
+        await ghl.sendEmail(contactId, email_tpl.subject, email_tpl.html);
+        console.log(`[new-lead] Sent welcome email to ${contactName}`);
+      }
+
+      console.log(`[new-lead] Preferred contact: "${preferredContact}" → SMS:${sendSms} Email:${sendMail}`);
     } catch (seqErr) {
       console.error("[new-lead] Failed to send welcome messages:", seqErr);
     }
