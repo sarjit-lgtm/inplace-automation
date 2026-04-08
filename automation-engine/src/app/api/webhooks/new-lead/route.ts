@@ -164,16 +164,21 @@ export async function POST(req: NextRequest) {
       console.error("[new-lead] Failed to create opportunity:", oppErr);
     }
 
-    // ── 7. Start speed-to-lead sequence ─────────────────────────────────────
-    await startSequence({
-      contactId,
-      contactName,
-      phone,
-      email,
-      leadSource: source,
-      score,
-      stylePref,
-    });
+    // ── 7. Send client welcome SMS + email immediately ────────────────────
+    try {
+      const { instantLeadSMS, welcomeEmail } = await import("@/lib/templates");
+
+      // Send welcome SMS to the lead
+      await ghl.sendSMS(contactId, instantLeadSMS(firstName, CONFIG.bookingLink));
+      console.log(`[new-lead] Sent welcome SMS to ${contactName}`);
+
+      // Send welcome email to the lead
+      const email_tpl = welcomeEmail(firstName, CONFIG.bookingLink);
+      await ghl.sendEmail(contactId, email_tpl.subject, email_tpl.html);
+      console.log(`[new-lead] Sent welcome email to ${contactName}`);
+    } catch (seqErr) {
+      console.error("[new-lead] Failed to send welcome messages:", seqErr);
+    }
 
     return NextResponse.json({ success: true, contactId, score, tier }, { status: 200 });
   } catch (err) {

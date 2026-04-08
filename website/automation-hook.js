@@ -1,183 +1,122 @@
 /**
- * Inplace Studio — Automation Engine Hook
- *
- * Add this script AFTER your existing form code on the page.
- * It intercepts the form submission and sends all data to the automation engine.
- *
- * Usage: <script src="automation-hook.js"></script>
- *   OR paste the contents inside a <script> tag after your form code.
+ * Inplace Studio — Automation Engine Hook (v2)
+ * Hooks into submitToGHL() and goSuccess() to capture form submissions.
  */
-
 (function () {
-  const AUTOMATION_URL = "https://inplace-automation-engine.vercel.app/api/webhooks/new-lead";
+  var AUTOMATION_URL = "https://inplace-automation-engine.vercel.app/api/webhooks/new-lead";
+  var TIMELINE_MAP = { now: "ASAP", "3mo": "1-3 Months", "6mo": "3-6 Months", flex: "Flexible" };
+  var STYLE_MAP = { modern: "Modern", transitional: "Transitional", traditional: "Traditional", european: "Contemporary", coastal: "Other", other: "Other" };
+  var NATURE_MAP = { remodel: "Renovation", "new-build": "New Build" };
+  var SOURCE_MAP = { "Interior Designer Referral": "Referral", "Word of Mouth": "Referral", "Google Search": "Google Ads", "Instagram / Social Media": "Meta (FB/IG)", Houzz: "Website Chat", "Architectural Digest / Press": "Website Chat", "Drove Past the Studio": "Walk-In", "Returning Client": "Referral" };
 
-  // Map timeline values from form to automation engine format
-  const TIMELINE_MAP = {
-    now: "ASAP",
-    "3mo": "1-3 Months",
-    "6mo": "3-6 Months",
-    flex: "Flexible",
-  };
-
-  // Map style values to readable names
-  const STYLE_MAP = {
-    modern: "Modern",
-    transitional: "Transitional",
-    traditional: "Traditional",
-    european: "Contemporary",
-    coastal: "Other",
-    other: "Other",
-  };
-
-  // Map nature values to kitchen type
-  const NATURE_MAP = {
-    remodel: "Renovation",
-    "new-build": "New Build",
-  };
-
-  // Map source values from "How did you hear" to lead source
-  const SOURCE_MAP = {
-    "Interior Designer Referral": "Referral",
-    "Word of Mouth": "Referral",
-    "Google Search": "Google Ads",
-    "Instagram / Social Media": "Meta (FB/IG)",
-    Houzz: "Website Chat",
-    "Architectural Digest / Press": "Website Chat",
-    "Drove Past the Studio": "Walk-In",
-    "Returning Client": "Referral",
-  };
-
-  // Helper: get selected card values from a group
-  function getCardValues(groupId) {
-    const group = document.getElementById(groupId);
-    if (!group) return [];
-    const selected = group.querySelectorAll(".ips-card.sel");
-    return Array.from(selected).map(function (card) {
-      return card.getAttribute("data-v") || "";
-    });
-  }
-
-  // Helper: get single card value
   function getCardValue(groupId) {
-    var vals = getCardValues(groupId);
-    return vals.length > 0 ? vals[0] : "";
+    var group = document.getElementById(groupId);
+    if (!group) return "";
+    var sel = group.querySelector(".ips-card.sel");
+    return sel ? (sel.getAttribute("data-v") || "") : "";
   }
-
-  // Helper: get input value by ID
   function getVal(id) {
     var el = document.getElementById(id);
     return el ? el.value.trim() : "";
   }
-
-  // Helper: convert budget string to range category
-  function budgetToRange(budgetStr) {
-    var num = parseInt(budgetStr.replace(/[^0-9]/g, ""), 10);
-    if (isNaN(num)) return "Not Disclosed";
-    if (num >= 200000) return "$200K+";
-    if (num >= 100000) return "$100K-$200K";
-    if (num >= 50000) return "$50K-$100K";
-    if (num >= 25000) return "$25K-$50K";
+  function budgetToRange(s) {
+    var n = parseInt(s.replace(/[^0-9]/g, ""), 10);
+    if (isNaN(n)) return "Not Disclosed";
+    if (n >= 200000) return "$200K+";
+    if (n >= 100000) return "$100K-$200K";
+    if (n >= 50000) return "$50K-$100K";
+    if (n >= 25000) return "$25K-$50K";
     return "Under $25K";
   }
 
-  // Watch for the form submission
-  // The existing form code calls ipsSub() or similar on the final step.
-  // We hook into the success panel becoming visible.
   var sent = false;
-
   function sendToAutomation() {
     if (sent) return;
+    var firstName = getVal("ips-fname");
+    var phone = getVal("ips-phone");
+    if (!firstName || !phone) return; // form not filled yet
     sent = true;
 
-    var firstName = getVal("ips-fname");
-    var lastName = getVal("ips-lname");
-    var email = getVal("ips-email");
-    var phone = getVal("ips-phone");
-    var budget = getVal("ips-budget");
-    var sourceDropdown = getVal("ips-source");
-
-    // Collect all form data
     var payload = {
       firstName: firstName,
-      lastName: lastName,
-      email: email,
+      lastName: getVal("ips-lname"),
+      email: getVal("ips-email"),
       phone: phone,
-      source: SOURCE_MAP[sourceDropdown] || "Website Chat",
-      budgetRange: budgetToRange(budget),
+      source: SOURCE_MAP[getVal("ips-source")] || "Website Chat",
+      budgetRange: budgetToRange(getVal("ips-budget")),
       timeline: TIMELINE_MAP[getCardValue("ips-s7-time")] || "",
       kitchenType: NATURE_MAP[getCardValue("ips-s1-nature")] || "",
       stylePref: STYLE_MAP[getCardValue("ips-s2-style")] || "",
-      // UTM parameters from URL
       utmSource: new URLSearchParams(window.location.search).get("utm_source") || "",
       utmMedium: new URLSearchParams(window.location.search).get("utm_medium") || "",
       utmCampaign: new URLSearchParams(window.location.search).get("utm_campaign") || "",
-      utmTerm: new URLSearchParams(window.location.search).get("utm_term") || "",
+      utmTerm: new URLSearchParams(window.location.search).get("utm_term") || ""
     };
 
-    // Send to automation engine (fire and forget — don't block the form)
+    console.log("[Inplace Automation] Sending lead:", payload);
     fetch(AUTOMATION_URL, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
+      body: JSON.stringify(payload)
     })
-      .then(function (res) { return res.json(); })
-      .then(function (data) {
-        console.log("[Inplace Automation] Lead sent successfully:", data);
-      })
-      .catch(function (err) {
-        console.error("[Inplace Automation] Failed to send lead:", err);
-      });
+    .then(function (r) { return r.json(); })
+    .then(function (d) { console.log("[Inplace Automation] Success:", d); })
+    .catch(function (e) { console.error("[Inplace Automation] Error:", e); });
   }
 
-  // METHOD 1: Hook into the existing ipsSub function if it exists
-  var originalIpsSub = window.ipsSub;
-  if (typeof originalIpsSub === "function") {
-    window.ipsSub = function () {
-      originalIpsSub.apply(this, arguments);
-      // Small delay to let validation pass before we send
-      setTimeout(sendToAutomation, 500);
-    };
-  }
+  // METHOD 1: Hook into submitToGHL (the actual submit function)
+  var checkSubmit = setInterval(function () {
+    if (typeof window.submitToGHL === "function" && !window._ipsHooked) {
+      window._ipsHooked = true;
+      var original = window.submitToGHL;
+      window.submitToGHL = function () {
+        var result = original.apply(this, arguments);
+        setTimeout(sendToAutomation, 1000);
+        return result;
+      };
+      console.log("[Inplace Automation] Hooked into submitToGHL");
+      clearInterval(checkSubmit);
+    }
+  }, 500);
+  setTimeout(function () { clearInterval(checkSubmit); }, 15000);
 
-  // METHOD 2: Watch for the success panel to appear (backup)
-  var observer = new MutationObserver(function (mutations) {
-    mutations.forEach(function (mutation) {
-      mutation.addedNodes.forEach(function (node) {
-        if (node.nodeType === 1 && node.classList && node.classList.contains("ips-success")) {
-          sendToAutomation();
-        }
-      });
-    });
-    // Also check if success panel became active
-    var successPanel = document.querySelector(".ips-success");
-    if (successPanel && successPanel.offsetParent !== null) {
+  // METHOD 2: Hook into goSuccess (the success screen function)
+  var checkSuccess = setInterval(function () {
+    if (typeof window.goSuccess === "function" && !window._ipsHooked2) {
+      window._ipsHooked2 = true;
+      var original2 = window.goSuccess;
+      window.goSuccess = function () {
+        var result = original2.apply(this, arguments);
+        setTimeout(sendToAutomation, 500);
+        return result;
+      };
+      console.log("[Inplace Automation] Hooked into goSuccess");
+      clearInterval(checkSuccess);
+    }
+  }, 500);
+  setTimeout(function () { clearInterval(checkSuccess); }, 15000);
+
+  // METHOD 3: Watch for success panel to become active (backup)
+  var observer = new MutationObserver(function () {
+    var panel = document.querySelector('.ips-panel[data-s="success"]');
+    if (panel && panel.classList.contains("active")) {
       sendToAutomation();
     }
   });
-
-  // Start observing the form body for changes
-  var formBody = document.querySelector(".ips-body");
-  if (formBody) {
-    observer.observe(formBody, { childList: true, subtree: true, attributes: true, attributeFilter: ["class", "style"] });
+  var body = document.querySelector(".ips-body");
+  if (body) {
+    observer.observe(body, { childList: true, subtree: true, attributes: true, attributeFilter: ["class"] });
   }
 
-  // METHOD 3: Intercept any submit button click on step 8
+  // METHOD 4: Listen for click on submit button on step 8
   document.addEventListener("click", function (e) {
-    var btn = e.target.closest(".ips-next");
+    var btn = e.target.closest("#ips-next, .ips-next");
     if (!btn) return;
-    // Check if we're on step 8 (the last step)
-    var activePanel = document.querySelector(".ips-panel.active");
-    if (activePanel && activePanel.getAttribute("data-s") === "8") {
-      // The user clicked "Submit" on the final step
-      // Wait for validation to pass and success to show
-      setTimeout(function () {
-        var success = document.querySelector(".ips-success");
-        if (success && (success.style.display !== "none" || success.classList.contains("active"))) {
-          sendToAutomation();
-        }
-      }, 1000);
+    var panel = document.querySelector(".ips-panel.active");
+    if (panel && panel.getAttribute("data-s") === "8") {
+      setTimeout(sendToAutomation, 2000);
     }
   });
 
-  console.log("[Inplace Automation] Hook loaded — ready to capture form submissions");
+  console.log("[Inplace Automation] Hook v2 loaded");
 })();
