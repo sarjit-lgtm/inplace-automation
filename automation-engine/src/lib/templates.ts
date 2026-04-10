@@ -104,8 +104,8 @@ function baseEmail(preheader: string, body: string, heroImage: boolean = true, p
         <tr><td style="height:2px;background:#B98879;"></td></tr>
 
         <!-- Logo header -->
-        <tr><td style="padding:36px 40px 28px;text-align:center;background:#fdfcfa;">
-          <img src="${LOGO_URL}" alt="Inplace Studio" width="140" style="max-width:140px;height:auto;display:inline-block;" />
+        <tr><td style="padding:40px 40px 32px;text-align:center;background:#fdfcfa;">
+          <img src="${LOGO_URL}" alt="Inplace Studio" width="170" style="max-width:170px;height:auto;display:inline-block;mix-blend-mode:multiply;" />
         </td></tr>
 
         ${heroImage ? `
@@ -200,11 +200,11 @@ export function welcomeEmail(
 
     <p style="margin:0 0 22px;">For over two decades, we've had the privilege of crafting extraordinary kitchens for Southern California's most discerning homeowners — partnering with the world's finest cabinetry houses to bring each vision to life with precision and artistry.</p>
 
-    <!-- Brand strip -->
-    <table width="100%" cellpadding="0" cellspacing="0" style="margin:32px 0;background:#1C1A17;">
-      <tr><td style="padding:24px;text-align:center;">
-        <p style="margin:0 0 12px;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#B98879;font-family:Helvetica,Arial,sans-serif;">Our Curated Partners</p>
-        <p style="margin:0;font-size:12px;letter-spacing:3px;color:#e8e4de;font-family:Georgia,serif;text-transform:uppercase;line-height:2;">
+    <!-- Brand partners strip - light elegant version -->
+    <table width="100%" cellpadding="0" cellspacing="0" style="margin:36px 0;">
+      <tr><td style="border-top:1px solid #e8e0d5;border-bottom:1px solid #e8e0d5;padding:28px 16px;text-align:center;background:#fbf9f5;">
+        <p style="margin:0 0 14px;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#B98879;font-family:Helvetica,Arial,sans-serif;">Our Curated Partners</p>
+        <p style="margin:0;font-size:13px;letter-spacing:3px;color:#3A3730;font-family:Georgia,serif;text-transform:uppercase;line-height:2;">
           SieMatic &middot; Woodmode &middot; Renzo Restelli<br>Signature Custom &middot; Full Custom
         </p>
       </td></tr>
